@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ash-Greninja Timetable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Kanit:wght@400;600;700&display=swap');
+        
+        :root {
+            --ash-greninja-blue: #0d47a1;
+            --ash-greninja-red: #e63946;
+            --ash-greninja-dark: #050a30;
+            --ash-greninja-highlight: #4fc3f7;
+            --ash-greninja-water: #00b4d8;
+            --ash-greninja-fire: #ff5a5f;
+        }
+        
+        body {
+            font-family: 'Kanit', 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, var(--ash-greninja-dark), var(--ash-greninja-blue));
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            touch-action: pan-y;
+        }
+        
+        .header {
+            background: rgba(5, 10, 48, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--ash-greninja-fire);
+            z-index: 50;
+        }
+        
+        .day-card {
+            background: rgba(13, 71, 161, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--ash-greninja-water);
+            box-shadow: 0 4px 25px rgba(79, 195, 247, 0.2), 
+                        0 -4px 15px rgba(230, 57, 70, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .day-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, 
+                rgba(230,57,70,0.1) 0%, 
+                rgba(79,195,247,0) 70%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .day-card:hover {
+            transform: scale(1.03) rotateY(3deg);
+            box-shadow: 0 8px 35px rgba(79, 195, 247, 0.4), 
+                        0 -8px 25px rgba(230, 57, 70, 0.3);
+        }
+        
+        .day-card:hover::before {
+            opacity: 1;
+        }
+        
+        .flip-hover:hover {
+            animation: flip 1s cubic-bezier(0.25, 0.45, 0.45, 0.95) forwards;
+        }
+        
+        @keyframes flip {
+            0% { transform: rotateY(0); }
+            50% { transform: rotateY(180deg) scale(1.05); }
+            100% { transform: rotateY(360deg) scale(1); }
+        }
+        
+        .course-item {
+            background: rgba(0, 180, 216, 0.15);
+            border-left: 3px solid var(--ash-greninja-highlight);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .course-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(230, 57, 70, 0.1), 
+                transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        
+        .course-item:hover {
+            background: rgba(0, 180, 216, 0.25);
+            transform: translateX(5px);
+            border-left: 3px solid var(--ash-greninja-fire);
+        }
+        
+        .course-item:hover::after {
+            transform: translateX(100%);
+        }
+        
+        .active-course {
+            background: rgba(230, 57, 70, 0.2) !important;
+            border-left: 3px solid var(--ash-greninja-fire) !important;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 15px rgba(230, 57, 70, 0.3);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 15px rgba(230, 57, 70, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(230, 57, 70, 0.6); }
+            100% { box-shadow: 0 0 15px rgba(230, 57, 70, 0.3); }
+        }
+        
+        /* Water/Fire Animation */
+        .water-fire-effect {
+            position: fixed;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: url('https://placehold.co/2000x100/0d47a1/e63946?text=Water+Fire+Effect') repeat-x;
+            background-size: 2000px 100px;
+            opacity: 0.3;
+            z-index: -1;
+            animation: wave 15s linear infinite;
+        }
+        
+        @keyframes wave {
+            0% { background-position: 0 0; }
+            100% { background-position: 2000px 0; }
+        }
+        
+        /* Ash-Greninja Silhouette */
+        .greninja-silhouette {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 150px;
+            height: 150px;
+            background: url('https://placehold.co/600x600/0d47a1/e63946?text=Ash-Greninja') center/contain no-repeat;
+            opacity: 0.2;
+            z-index: -1;
+            transition: all 0.5s ease;
+        }
+        
+        .greninja-silhouette:hover {
+            transform: scale(1.1) rotate(10deg);
+            opacity: 0.4;
+        }
+        
+        /* Mobile Sidebar */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        /* Notification Panel */
+        .notification-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(5, 10, 48, 0.9);
+            border-left: 4px solid var(--ash-greninja-fire);
+            transform: translateY(150%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        
+        .notification-panel.show {
+            transform: translateY(0);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--ash-greninja-blue), var(--ash-greninja-fire));
+            border-radius: 10px;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .greninja-silhouette {
+                width: 100px;
+                height: 100px;
+                opacity: 0.15;
+            }
+            
+            .day-card {
+                backdrop-filter: none;
+                background: rgba(13, 71, 161, 0.5);
+            }
+            
+            .course-item {
+                padding: 12px;
+            }
+        }
+        
+        /* Swipe Indicator for Mobile */
+        .swipe-indicator {
+            width: 60px;
+            height: 6px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .swipe-indicator::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 30px;
+            background: var(--ash-greninja-fire);
+            border-radius: 3px;
+            animation: swipe 2s infinite ease-in-out;
+        }
+        
+        @keyframes swipe {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(30px); }
+        }
+        
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--ash-greninja-fire), var(--ash-greninja-blue));
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(230, 57, 70, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 40;
+            transition: all 0.3s ease;
+        }
+        
+        .fab:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 6px 25px rgba(230, 57, 70, 0.7);
+        }
+        
+        /* Custom Checkbox for Reminders */
+        .reminder-checkbox {
+            position: absolute;
+            opacity: 0;
+        }
+        
+        .reminder-checkbox + label {
+            position: relative;
+            cursor: pointer;
+            padding-left: 30px;
+        }
+        
+        .reminder-checkbox + label:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--ash-greninja-fire);
+            border-radius: 4px;
+            background: transparent;
+            transition: all 0.3s;
+        }
+        
+        .reminder-checkbox:checked + label:before {
+            background: var(--ash-greninja-fire);
+        }
+        
+        .reminder-checkbox:checked + label:after {
+            content: '✓';
+            position: absolute;
+            left: 5px;
+            top: 0;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="water-fire-effect"></div>
+    <div class="greninja-silhouette flip-hover"></div>
+    
+    <!-- Mobile Menu Button -->
+    <button id="menu-button" class="md:hidden fixed top-4 right-4 z-50 bg-black bg-opacity-50 rounded-full p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    </button>
+    
+    <!-- Mobile Sidebar -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-y-0 right-0 w-72 bg-gradient-to-b from-gray-900 to-blue-900 z-40 p-6 shadow-2xl overflow-y-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-xl font-bold text-cyan-300">Menu</h3>
+            <button id="close-menu" class="text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        
+        <div class="mb-6">
+            <h4 class="text-lg font-semibold text-amber-200 mb-3">Quick Actions</h4>
+            <button class="w-full bg-ash-greninja-fire text-white py-2 px-4 rounded-lg mb-2 flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Current Class
+            </button>
+            <button id="set-reminder-btn" class="w-full bg-ash-greninja-blue text-white py-2 px-4 rounded-lg mb-2 flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                Set Reminder
+            </button>
+        </div>
+        
+        <div>
+            <h4 class="text-lg font-semibold text-amber-200 mb-3">Your Reminders</h4>
+            <div id="reminders-list" class="space-y-3 overflow-y-auto max-h-40 pr-2">
+                <!-- Reminders will be added here -->
+            </div>
+        </div>
+        
+        <div class="mt-6 pt-6 border-t border-gray-700">
+            <h4 class="text-lg font-semibold text-amber-200 mb-3">Course Colors</h4>
+            <div class="grid grid-cols-3 gap-2">
+                <div class="color-option bg-cyan-500 h-8 rounded cursor-pointer" data-color="cyan-500"></div>
+                <div class="color-option bg-red-500 h-8 rounded cursor-pointer" data-color="red-500"></div>
+                <div class="color-option bg-green-500 h-8 rounded cursor-pointer" data-color="green-500"></div>
+                <div class="color-option bg-purple-500 h-8 rounded cursor-pointer" data-color="purple-500"></div>
+                <div class="color-option bg-yellow-500 h-8 rounded cursor-pointer" data-color="yellow-500"></div>
+                <div class="color-option bg-pink-500 h-8 rounded cursor-pointer" data-color="pink-500"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Floating Action Button -->
+    <div id="fab" class="fab">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="pb-20">
+        <header class="header py-6 px-4 md:px-8 sticky top-0">
+            <div class="container mx-auto flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-cyan-300 to-red-400">
+                        <span>ASH</span> <span class="text-red-400">GRENINJA</span> <span>TIMETABLE</span>
+                    </h1>
+                    <div class="text-xs md:text-sm opacity-80">Synced with your ninja training schedule</div>
+                </div>
+                <div class="text-sm md:text-md text-cyan-300 hidden md:block">
+                    <div id="current-date" class="text-right"></div>
+                    <div id="current-time" class="text-right"></div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Mobile Swipe Indicator -->
+        <div class="md:hidden flex justify-center py-3">
+            <div class="swipe-indicator"></div>
+        </div>
+        
+        <main class="container mx-auto px-4 py-6 md:py-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Monday -->
+                <div class="day-card scroll-reveal rounded-xl p-5">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-xl font-bold text-cyan-300">MONDAY</h2>
+                        <div class="flex gap-2">
+                            <input type="checkbox" id="monday-reminder" class="reminder-checkbox">
+                            <label for="monday-reminder" class="text-xs text-gray-300">Remind</label>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="course-item p-4 rounded-lg" data-time="10:00-11:20" data-course="LA" data-room="D-305">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">LA (10:00-11:20)</p>
+                                <span class="badge bg-red-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Theory</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">D-305</p>
+                        </div>
+                        <div class="course-item p-4 rounded-lg" data-time="11:30-12:50" data-course="Theory of Automata" data-room="D-305">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">Theory of Automata (11:30-12:50)</p>
+                                <span class="badge bg-red-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Theory</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">D-305</p>
+                        </div>
+                        <div class="course-item p-4 rounded-lg" data-time="13:00-14:20" data-course="Discrete" data-room="D-303">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">Discrete (1:00-2:20)</p>
+                                <span class="badge bg-red-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Theory</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">D-303</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tuesday -->
+                <div class="day-card scroll-reveal rounded-xl p-5">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-xl font-bold text-cyan-300">TUESDAY</h2>
+                        <div class="flex gap-2">
+                            <input type="checkbox" id="tuesday-reminder" class="reminder-checkbox">
+                            <label for="tuesday-reminder" class="text-xs text-gray-300">Remind</label>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="course-item p-4 rounded-lg" data-time="08:30-09:50" data-course="Coal" data-room="D-302">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">Coal (8:30-9:50)</p>
+                                <span class="badge bg-red-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Theory</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">D-302</p>
+                        </div>
+                        <div class="course-item p-4 rounded-lg" data-time="15:55-17:15" data-course="OOP" data-room="D-416">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">OOP (3:55-5:15)</p>
+                                <span class="badge bg-blue-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Lab</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">D-416</p>
+                        </div>
+                        <div class="course-item p-4 rounded-lg" data-time="14:30-16:15" data-course="Civics" data-room="D-303">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">Civics (2:30-4:15)</p>
+                                <span class="badge bg-purple-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Elective</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">D-303</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Wednesday -->
+                <div class="day-card scroll-reveal rounded-xl p-5">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-xl font-bold text-cyan-300">WEDNESDAY</h2>
+                        <div class="flex gap-2">
+                            <input type="checkbox" id="wednesday-reminder" class="reminder-checkbox">
+                            <label for="wednesday-reminder" class="text-xs text-gray-300">Remind</label>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="course-item p-4 rounded-lg" data-time="10:00-11:20" data-course="LA" data-room="D-305">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">LA (10:00-11:20)</p>
+                                <span class="badge bg-red-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Theory</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">D-305</p>
+                        </div>
+                        <div class="course-item p-4 rounded-lg" data-time="11:30-12:50" data-course="Theory of Automata" data-room="D-305">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">Theory of Automata (11:30-12:50)</p>
+                                <span class="badge bg-red-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Theory</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">D-305</p>
+                        </div>
+                        <div class="course-item p-4 rounded-lg" data-time="13:00-14:20" data-course="Discrete" data-room="D-303">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">Discrete (1:00-2:20)</p>
+                                <span class="badge bg-red-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Theory</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">D-303</p>
+                        </div>
+                        <div class="course-item p-4 rounded-lg" data-time="14:30-17:15" data-course="OOP Lab" data-room="Margalla-3">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">OOP Lab (2:30-5:15)</p>
+                                <span class="badge bg-blue-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Lab</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">Margalla-3</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Thursday -->
+                <div class="day-card scroll-reveal rounded-xl p-5">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-xl font-bold text-cyan-300">THURSDAY</h2>
+                        <div class="flex gap-2">
+                            <input type="checkbox" id="thursday-reminder" class="reminder-checkbox">
+                            <label for="thursday-reminder" class="text-xs text-gray-300">Remind</label>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="course-item p-4 rounded-lg" data-time="08:30-09:50" data-course="COAL" data-room="D-302">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">COAL (8:30-9:50)</p>
+                                <span class="badge bg-red-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Theory</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">D-302</p>
+                        </div>
+                        <div class="course-item p-4 rounded-lg" data-time="11:30-14:20" data-course="COAL Lab" data-room="C-Margalla1">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">COAL Lab (11:30-2:20)</p>
+                                <span class="badge bg-blue-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Lab</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">C-Margalla1</p>
+                        </div>
+                        <div class="course-item p-4 rounded-lg" data-time="15:55-17:15" data-course="OOP" data-room="D-415">
+                            <div class="flex justify-between items-center">
+                                <p class="font-medium">OOP (3:55-5:15)</p>
+                                <span class="badge bg-blue-500 bg-opacity-50 text-xs py-1 px-2 rounded-full">Lab</span>
+                            </div>
+                            <p class="text-sm opacity-80 mt-1">D-415</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Notification Panel -->
+    <div id="notification-panel" class="notification-panel rounded-r-lg p-4 shadow-lg max-w-xs">
+        <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-amber-200 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Class Reminder</span>
+            </h3>
+            <button id="close-notification" class="text-gray-400 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div id="notification-content" class="text-sm"></div>
+    </div>
+    
+    <script>
+        // Initialize ScrollReveal
+        ScrollReveal().reveal('.scroll-reveal', {
+            delay: 200,
+            distance: '50px',
+            origin: 'bottom',
+            opacity: 0,
+            interval: 100,
+            easing: 'ease-out',
+            viewFactor: 0.1
+        });
+        
+        // Mobile Menu Toggle
+        const menuButton = document.getElementById('menu-button');
+        const closeMenu = document.getElementById('close-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.add('open');
+        });
+        
+        closeMenu.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+        });
+        
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+            
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true 
+            };
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', timeOptions);
+            
+            // Highlight current class
+            highlightCurrentClass(now);
+        }
+        
+        // Initial call
+        updateDateTime();
+        
+        // Update every second
+        setInterval(updateDateTime, 1000);
+        
+        // Highlight current class
+        function highlightCurrentClass(now) {
+            // Remove all active classes first
+            document.querySelectorAll('.course-item').forEach(item => {
+                item.classList.remove('active-course');
+            });
+            
+            const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTime = currentHour * 60 + currentMinute;
+            
+            // Only highlight Monday-Thursday (1-4)
+            if (currentDay >= 1 && currentDay <= 4) {
+                // Get all course items for current day
+                const dayCards = document.querySelectorAll('.day-card');
+                if (dayCards[currentDay - 1]) {
+                    const courseItems = dayCards[currentDay - 1].querySelectorAll('.course-item');
+                    
+                    courseItems.forEach(item => {
+                        const timeRange = item.getAttribute('data-time').split('-');
+                        const startTime = convertTimeToMinutes(timeRange[0]);
+                        const endTime = convertTimeToMinutes(timeRange[1]);
+                        
+                        if (currentTime >= startTime && currentTime <= endTime) {
+                            item.classList.add('active-course');
+                            
+                            // Show notification if this is a new active class
+                            if (!item.hasAttribute('data-notified')) {
+                                showClassNotification(
+                                    item.getAttribute('data-course'),
+                                    item.getAttribute('data-room'),
+                                    item.getAttribute('data-time')
+                                );
+                                item.setAttribute('data-notified', 'true');
+                            }
+                        } else {
+                            item.removeAttribute('data-notified');
+                        }
+                    });
+                }
+            }
+        }
+        
+        function convertTimeToMinutes(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + (minutes || 0);
+        }
+        
+        // Class Notification
+        function showClassNotification(course, room, time) {
+            const notification = document.getElementById('notification-panel');
+            const content = document.getElementById('notification-content');
+            
+            content.innerHTML = `
+                <p class="font-semibold">${course}</p>
+                <p class="text-sm opacity-80">Room: ${room}</p>
+                <p class="text-sm opacity-80">Time: ${time}</p>
+                <div class="mt-2 pt-2 border-t border-gray-700 text-xs">
+                    <p>Your class is happening now!</p>
+                </div>
+            `;
+            
+            notification.classList.add('show');
+            
+            // Speak the notification (if permission granted)
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance();
+                utterance.text = `Reminder: Your ${course} class is happening now in ${room}`;
+                utterance.rate = 1;
+                
+                // Try to get voices and set a female voice if available
+                const voices = window.speechSynthesis.getVoices();
+                if (voices.length > 0) {
+                    utterance.voice = voices.find(v => v.lang.includes('en')) || voices[0];
+                }
+                
+                window.speechSynthesis.speak(utterance);
+            }
+            
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 10000);
+        }
+        
+        // Close notification
+        document.getElementById('close-notification').addEventListener('click', () => {
+            document.getElementById('notification-panel').classList.remove('show');
+        });
+        
+        // Set Reminder Button
+        document.getElementById('set-reminder-btn').addEventListener('click', () => {
+            // In a real app, this would open a proper reminder dialog
+            alert('Reminder feature would allow you to set custom notifications for classes');
+        });
+        
+        // FAB Action
+        document.getElementById('fab').addEventListener('click', () => {
+            // Scroll to top
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Color Picker for Courses
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const color = this.getAttribute('data-color');
+                // In a real app, this would apply the color to selected courses
+                console.log(`Selected color: ${color}`);
+            });
+        });
+        
+        // Load any saved reminders
+        function loadReminders() {
+            // In a real app, this would load from localStorage or a database
+            const remindersList = document.getElementById('reminders-list');
+            remindersList.innerHTML = `
+                <div class="text-sm opacity-70 text-center py-2">No reminders yet</div>
+            `;
+        }
+        
+        loadReminders();
+        
+        // Handle swipe gestures for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+        
+        function handleSwipe() {
+            if (touchEndX < touchStartX && touchStartX - touchEndX > 50) {
+                // Swipe left - open menu
+                mobileMenu.classList.add('open');
+            }
+            if (touchEndX > touchStartX && touchEndX - touchStartX > 50) {
+                // Swipe right - close menu
+                mobileMenu.classList.remove('open');
+            }
+        }
+    </script>
+</body>
+</html>
