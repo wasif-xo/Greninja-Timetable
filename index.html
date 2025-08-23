@@ -3,80 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timetable Coordinator</title>
+    <title>Advanced Timetable Coordinator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --accent1: #fd79a8;
+            --accent2: #00cec9;
+            --dark: #2d3436;
+            --light: #dfe6e9;
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            color: #333;
+            background: linear-gradient(-45deg, #6c5ce7, #00cec9, #fd79a8, #a29bfe);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--light);
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .particles-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
         }
         
         header {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            transition: transform 0.5s ease;
+        }
+        
+        header:hover {
+            transform: translateY(-5px);
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
         }
         
         h1 {
-            font-size: 2.8rem;
-            color: #1a2a6c;
+            font-size: 3.5rem;
+            font-weight: 700;
             margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--light), var(--accent2), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent1), var(--accent2));
+            border-radius: 2px;
         }
         
         .subtitle {
-            font-size: 1.2rem;
-            color: #555;
+            font-size: 1.3rem;
+            color: var(--light);
+            margin-top: 15px;
+            opacity: 0.9;
         }
         
         .tabs {
             display: flex;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
+            gap: 15px;
+            position: relative;
         }
         
         .tab-btn {
-            padding: 12px 24px;
-            margin: 0 10px 10px;
-            background: #fff;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             border: none;
             border-radius: 50px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
+            color: var(--light);
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--accent1), var(--primary));
+            transition: all 0.4s ease;
+            z-index: -1;
+            border-radius: 50px;
+        }
+        
+        .tab-btn:hover::before {
+            width: 100%;
         }
         
         .tab-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
         }
         
         .tab-btn.active {
-            background: #1a2a6c;
-            color: white;
+            background: linear-gradient(45deg, var(--primary), var(--accent1));
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
         }
         
         .tab-content {
             display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .tab-content.active {
@@ -84,103 +197,238 @@
         }
         
         .timetable-container {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(0);
+            transition: transform 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .timetable-container:hover {
+            transform: translateY(-10px);
+        }
+        
+        .timetable-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--primary));
         }
         
         .timetable-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #eee;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .person-name {
-            font-size: 1.8rem;
-            color: #1a2a6c;
+            font-size: 2rem;
             font-weight: 700;
+            background: linear-gradient(45deg, var(--light), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .person-id {
+            background: linear-gradient(45deg, var(--primary), var(--accent1));
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
         .day-selector {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 25px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .day-btn {
-            padding: 8px 16px;
-            background: #f0f0f0;
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            border-radius: 20px;
+            border-radius: 50px;
+            color: var(--light);
             cursor: pointer;
             transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .day-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--accent2), var(--primary));
+            transition: all 0.3s ease;
+            z-index: -1;
+            border-radius: 50px;
+        }
+        
+        .day-btn:hover::before {
+            width: 100%;
         }
         
         .day-btn.active {
-            background: #1a2a6c;
-            color: white;
+            background: linear-gradient(45deg, var(--primary), var(--accent2));
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
         .timetable {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
         
         .timetable th {
-            background: #1a2a6c;
+            background: linear-gradient(45deg, var(--primary), var(--accent1));
             color: white;
-            padding: 12px;
+            padding: 18px;
             text-align: left;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .timetable th::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
         }
         
         .timetable td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
+            padding: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
         }
         
-        .timetable tr:nth-child(even) {
-            background: #f9f9f9;
+        .timetable tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .timetable tr:hover td {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
         .break-container {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(0);
+            transition: transform 0.4s ease;
+        }
+        
+        .break-container:hover {
+            transform: translateY(-10px);
         }
         
         .break-header {
-            font-size: 1.5rem;
-            color: #1a2a6c;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(45deg, var(--light), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
         }
         
         .break-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
         }
         
         .break-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(0);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .break-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--primary));
+        }
+        
+        .break-card:hover {
+            transform: translateY(-10px) rotate(2deg);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
         }
         
         .break-title {
-            font-size: 1.2rem;
-            color: #1a2a6c;
-            margin-bottom: 15px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--light);
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .break-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent1), var(--accent2));
+            border-radius: 2px;
         }
         
         .break-list {
@@ -188,10 +436,18 @@
         }
         
         .break-list li {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .break-list li:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transform: translateX(5px);
         }
         
         .break-list li:last-child {
@@ -199,43 +455,130 @@
         }
         
         .time-badge {
-            background: #1a2a6c;
+            background: linear-gradient(45deg, var(--primary), var(--accent1));
             color: white;
-            padding: 4px 10px;
+            padding: 8px 15px;
             border-radius: 20px;
             font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .time-badge:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .floating-icons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 10;
+        }
+        
+        .icon-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent1));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(108, 92, 231, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
+        }
+        
+        .icon-btn:hover {
+            transform: translateY(-5px) rotate(10deg);
+            animation: none;
         }
         
         @media (max-width: 768px) {
-            .timetable-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
+            h1 {
+                font-size: 2.5rem;
             }
             
             .break-grid {
                 grid-template-columns: 1fr;
             }
             
-            h1 {
-                font-size: 2.2rem;
+            .timetable-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
             }
+            
+            .floating-icons {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .icon-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--light);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .highlight {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(45deg, var(--accent1), transparent);
+            z-index: -1;
+            opacity: 0.7;
+            border-radius: 2px;
         }
     </style>
 </head>
 <body>
+    <div class="particles-container" id="particles"></div>
+    
     <div class="container">
         <header>
-            <h1>Timetable Coordinator</h1>
-            <p class="subtitle">Compare schedules and find matching breaks</p>
+            <h1>Timetable <span class="highlight">Coordinator</span></h1>
+            <p class="subtitle">Compare schedules and find matching breaks with stunning visuals</p>
         </header>
         
         <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('timetables')">Timetables</button>
-            <button class="tab-btn" onclick="showTab('breaks')">Matching Breaks</button>
+            <button class="tab-btn active" onclick="showTab('timetables')"><i class="fas fa-calendar-alt"></i> Timetables</button>
+            <button class="tab-btn" onclick="showTab('breaks')"><i class="fas fa-clock"></i> Matching Breaks</button>
+            <button class="tab-btn" onclick="showTab('stats')"><i class="fas fa-chart-pie"></i> Statistics</button>
         </div>
         
         <div id="timetables" class="tab-content active">
+            <!-- Momina's Timetable -->
             <div class="timetable-container">
                 <div class="timetable-header">
                     <h2 class="person-name">Momina Timetable</h2>
@@ -366,6 +709,7 @@
                 </div>
             </div>
             
+            <!-- Wasif's Timetable -->
             <div class="timetable-container">
                 <div class="timetable-header">
                     <h2 class="person-name">Wasif Timetable</h2>
@@ -495,6 +839,7 @@
                 </div>
             </div>
             
+            <!-- Siiaa's Timetable -->
             <div class="timetable-container">
                 <div class="timetable-header">
                     <h2 class="person-name">Siiaa Timetable</h2>
@@ -672,7 +1017,58 @@
                 </div>
             </div>
         </div>
+
+        <div id="stats" class="tab-content" style="display:none">
+            <div class="break-container">
+                <h2 class="break-header">Schedule Statistics</h2>
+                <div class="break-grid">
+                    <div class="break-card">
+                        <h3 class="break-title">Total Class Hours</h3>
+                        <ul class="break-list">
+                            <li>Momina <span class="time-badge">24.5 hours</span></li>
+                            <li>Wasif <span class="time-badge">22 hours</span></li>
+                            <li>Siiaa <span class="time-badge">19 hours</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="break-card">
+                        <h3 class="break-title">Optimal Meeting Times</h3>
+                        <ul class="break-list">
+                            <li>Monday <span class="time-badge">2:20-2:30 PM</span></li>
+                            <li>Tuesday <span class="time-badge">12:50-1:00 PM</span></li>
+                            <li>Wednesday <span class="time-badge">2:20-2:30 PM</span></li>
+                            <li>Thursday <span class="time-badge">2:20-3:55 PM</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="break-card">
+                        <h3 class="break-title">Free Days Analysis</h3>
+                        <ul class="break-list">
+                            <li>Momina <span class="time-badge">Friday Free</span></li>
+                            <li>Wasif <span class="time-badge">Friday Free</span></li>
+                            <li>Siiaa <span class="time-badge">Weekend Free</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <div class="floating-icons">
+        <div class="icon-btn" onclick="alert('Settings clicked')">
+            <i class="fas fa-cog"></i>
+        </div>
+        <div class="icon-btn" onclick="window.print()">
+            <i class="fas fa-print"></i>
+        </div>
+        <div class="icon-btn" onclick="alert('Share timetable')">
+            <i class="fas fa-share-alt"></i>
+        </div>
+    </div>
+
+    <footer>
+        <p>Advanced Timetable Coordinator &copy; 2023 | Designed with ❤️ for Momina, Wasif & Siiaa</p>
+    </footer>
 
     <script>
         function showTab(tabName) {
@@ -711,7 +1107,34 @@
             // Add active class to clicked button
             event.currentTarget.classList.add('active');
         }
+
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size
+                const size = Math.random() * 20 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.top = `${Math.random() * 100}vh`;
+                
+                // Random animation delay
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // Initialize particles
+        createParticles();
     </script>
 </body>
 </html>
-
