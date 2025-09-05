@@ -979,6 +979,160 @@
                 </div>
             </div>
         </div>
+        <!-- Saad's Timetable -->
+<div class="timetable-container">
+    <div class="timetable-header">
+        <h2 class="person-name">Saad Timetable</h2>
+    </div>
+    
+    <div class="day-selector">
+        <button class="day-btn active" onclick="showDay('monday', 'saad')">Monday</button>
+        <button class="day-btn" onclick="showDay('tuesday', 'saad')">Tuesday</button>
+        <button class="day-btn" onclick="showDay('wednesday', 'saad')">Wednesday</button>
+        <button class="day-btn" onclick="showDay('thursday', 'saad')">Thursday</button>
+        <button class="day-btn" onclick="showDay('friday', 'saad')">Friday</button>
+    </div>
+    
+    <div id="saad-monday" class="day-content">
+        <table class="timetable">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Room</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Data Structures</td>
+                    <td>D-304</td>
+                    <td>8:30-9:50</td>
+                </tr>
+                <tr>
+                    <td>Discrete Mathematics</td>
+                    <td>D-304</td>
+                    <td>10:00-11:20</td>
+                </tr>
+                <tr>
+                    <td>COAL</td>
+                    <td>D-304</td>
+                    <td>11:30-12:50</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="saad-tuesday" class="day-content" style="display:none">
+        <table class="timetable">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Room</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>COAL Lab</td>
+                    <td>C-Margalla 1</td>
+                    <td>8:30-11:20</td>
+                </tr>
+                <tr>
+                    <td>Theory of Automata</td>
+                    <td>D-304</td>
+                    <td>1:00-2:20</td>
+                </tr>
+                <tr>
+                    <td>Linear Algebra</td>
+                    <td>D-304</td>
+                    <td>2:30-3:50</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="saad-wednesday" class="day-content" style="display:none">
+        <table class="timetable">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Room</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Data Structures</td>
+                    <td>D-302</td>
+                    <td>8:30-9:50</td>
+                </tr>
+                <tr>
+                    <td>Discrete Mathematics</td>
+                    <td>D-302</td>
+                    <td>10:00-11:20</td>
+                </tr>
+                <tr>
+                    <td>Civics</td>
+                    <td>D-302</td>
+                    <td>11:30-1:15</td>
+                </tr>
+                <tr>
+                    <td>COAL</td>
+                    <td>D-302</td>
+                    <td>2:30-3:50</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="saad-thursday" class="day-content" style="display:none">
+        <table class="timetable">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Room</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Data Structures Lab</td>
+                    <td>C-Margalla 1</td>
+                    <td>8:30-11:20</td>
+                </tr>
+                <tr>
+                    <td>Theory of Automata</td>
+                    <td>D-304</td>
+                    <td>1:00-2:20</td>
+                </tr>
+                <tr>
+                    <td>Linear Algebra</td>
+                    <td>D-303</td>
+                    <td>2:30-3:50</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="saad-friday" class="day-content" style="display:none">
+        <table class="timetable">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Room</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Free Day</td>
+                    <td>-</td>
+                    <td>No Classes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
         
         <div id="breaks" class="tab-content" style="display:none">
             <div class="break-container">
@@ -994,7 +1148,16 @@
                             <li>Thursday <span class="time-badge">9:50-10:00, 11:20-11:30, 2:20-3:55</span></li>
                         </ul>
                     </div>
-                    
+                    <!-- Add this to the breaks section after the existing break cards -->
+<div class="break-card">
+    <h3 class="break-title">Saad & Wasif</h3>
+    <ul class="break-list">
+        <li>Monday <span class="time-badge">12:50-1:00</span></li>
+        <li>Tuesday <span class="time-badge">11:20-1:00</span></li>
+        <li>Wednesday <span class="time-badge">2:20-2:30</span></li>
+        <li>Thursday <span class="time-badge">11:20-11:30</span></li>
+    </ul>
+</div>
                     <div class="break-card">
                         <h3 class="break-title">Wasif & Siiaa</h3>
                         <ul class="break-list">
